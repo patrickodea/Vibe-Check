@@ -3,7 +3,9 @@ const express = require('express');
 const { graphqlHTTP } = require('express-graphql');
 const mongoose = require('mongoose');
 const cors = require('cors');
-//todo import schema
+const schema = require('./schemas/userSchema');
+
+const User = require('./models/User');
 
 const app = express();
 app.use(cors());
@@ -13,8 +15,9 @@ mongoose.connection.once('open', () => {
     console.log('Connected to database');
 });
 
+//! change the schema to userSchema if other schemas are added
 app.use('/graphql', graphqlHTTP({
-    //todo add schema
+    schema: schema,
     graphiql: true
 }));
 
