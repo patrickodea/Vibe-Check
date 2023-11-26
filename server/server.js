@@ -4,6 +4,7 @@ const { graphqlHTTP } = require('express-graphql');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const schema = require('./schemas/userSchema');
+const root = require('./schemas/userResolvers');
 
 const User = require('./models/User');
 
@@ -18,6 +19,7 @@ mongoose.connection.once('open', () => {
 //! change the schema to userSchema if other schemas are added
 app.use('/graphql', graphqlHTTP({
     schema: schema,
+    rootValue: root,
     graphiql: true
 }));
 
