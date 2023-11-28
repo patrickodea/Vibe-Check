@@ -11,6 +11,7 @@ const schema = buildSchema(`
     type Query {
         user(id: ID!): User
         users: [User]
+        userExists(email: String!): Boolean!
     }
 
     type Mutation {

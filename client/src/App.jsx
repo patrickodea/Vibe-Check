@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Dropdown from './Dropdown';
 import Listbox from './Listbox';
 import Detail from './Detail';
+import SignUp from './Sign-up';
 import { Credentials } from './Credentials';
 import axios from 'axios';
 
@@ -102,7 +103,7 @@ const App = () => {
 
   return (
     <div className="container">
-      <form onSubmit={buttonClicked}>        
+      {/* <form onSubmit={buttonClicked}>        
           <Dropdown label="Genre :" options={genres.listOfGenresFromAPI} selectedValue={genres.selectedGenre} changed={genreChanged} />
           <Dropdown label="Playlist :" options={playlist.listOfPlaylistFromAPI} selectedValue={playlist.selectedPlaylist} changed={playlistChanged} />
           <div className="col-sm-6 row form-group px-0">
@@ -114,7 +115,9 @@ const App = () => {
             <Listbox items={tracks.listOfTracksFromAPI} clicked={listboxClicked} />
             {trackDetail && <Detail {...trackDetail} /> }
           </div>        
-      </form>
+      </form> */}
+
+      <SignUp />
     </div>
     
   );
