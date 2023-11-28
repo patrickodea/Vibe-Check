@@ -59,8 +59,10 @@ const Signup = () => {
                   `
                 }
               })
+
+              //todo: show success message to user
                 
-              // todo: start the Spotify authorization sequence
+              // todo: start the Spotify authorization sequence with a button click
 
               //todo: Store the refresh token in your MongoDB database and associate it with the user's account in your app. This links the two accounts together.
 
