@@ -1,11 +1,19 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { Credentials } from './Credentials';
+
+const spotify = Credentials();
+const SCOPES = 'user-read-private user-read-email playlist-modify-public playlist-modify-private';
+//! change redirect url in production
+const SPOTIFY_AUTH_URL = `https://accounts.spotify.com/authorize?client_id=${spotify.ClientId}&response_type=code&redirect_uri=${encodeURIComponent('http://localhost:5173/callback')}&scope=${encodeURIComponent(SCOPES)}`;
 
 const Signup = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({email: '', password: ''});
     const [isUserCreated, setIsUserCreated] = useState(false);
+
+    
 
     const handleEmailChange = (event) => {
         setEmail(event.target.value);
@@ -60,21 +68,20 @@ const Signup = () => {
                   `
                 }
               })
-
-              //todo: show success message to user
-                
-              // todo: start the Spotify authorization sequence with a button click
-
-              //todo: Store the refresh token in your MongoDB database and associate it with the user's account in your app. This links the two accounts together.
-
-              //todo: call Login function after successful authorization
-              
             }
           })
           .then(response => {
             if (response && response.data.data.createUser) {
               console.log("User created!");
               setIsUserCreated(true);
+
+              //todo: show success message to user
+                
+              // todo: start the Spotify authorization sequence with a button click
+            
+              //todo: Store the refresh token in your MongoDB database and associate it with the user's account in your app. This links the two accounts together.
+
+              //todo: call Login function after successful authorization
             }
           })
           .catch(error => {
@@ -97,7 +104,7 @@ const Signup = () => {
           <button type="submit" onClick={handleSubmit}>Sign up</button>
         </>
       ) : (
-        <button type="button">Link Your Spotify account to Vibe Check</button>
+        <button type="button" onClick={() => window.location = SPOTIFY_AUTH_URL}>Link Your Spotify account to Vibe Check</button>
       )}
     </form>
     );
