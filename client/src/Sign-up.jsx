@@ -5,6 +5,7 @@ const Signup = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({email: '', password: ''});
+    const [isUserCreated, setIsUserCreated] = useState(false);
 
     const handleEmailChange = (event) => {
         setEmail(event.target.value);
@@ -46,7 +47,7 @@ const Signup = () => {
               console.log('unique email entered')
               
               // create user in mongo db
-              axios({
+              return axios({
                 url: 'http://localhost:4000/graphql', //! change to absolute path of production server
                 method: 'post',
                 data: {
@@ -70,8 +71,14 @@ const Signup = () => {
               
             }
           })
+          .then(response => {
+            if (response && response.data.data.createUser) {
+              console.log("User created!");
+              setIsUserCreated(true);
+            }
+          })
           .catch(error => {
-            console.error('Error checking email', error);
+            console.error(error);
             // Handle the error appropriately here
           });
         }
@@ -79,14 +86,20 @@ const Signup = () => {
       
 
     return (
-        <form>
-            <input type="text" value={email} onChange={handleEmailChange} placeholder="Email" />
-            <div>{errors.email}</div>
-            <input type="password" value={password} onChange={handlePasswordChange} placeholder="Password" />
-            <div>{errors.password}</div>
-            {/* submit button */}
-            <button type="submit" onClick={handleSubmit}>Sign up</button>
-        </form>
+      <form>
+      {!isUserCreated ? (
+        <>
+          <input type="text" value={email} onChange={handleEmailChange} placeholder="Email" />
+          <div>{errors.email}</div>
+          <input type="password" value={password} onChange={handlePasswordChange} placeholder="Password" />
+          <div>{errors.password}</div>
+          {/* submit button */}
+          <button type="submit" onClick={handleSubmit}>Sign up</button>
+        </>
+      ) : (
+        <button type="button">Link Your Spotify account to Vibe Check</button>
+      )}
+    </form>
     );
 };
 
