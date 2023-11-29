@@ -16,6 +16,7 @@ const schema = buildSchema(`
 
     type Mutation {
         createUser(email: String!, password: String!, spotifyAccountLink: String): User
+        loginUser(email: String!, password: String!): User
     }
 `);
 
