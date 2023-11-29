@@ -11,10 +11,12 @@ const schema = buildSchema(`
     type Query {
         user(id: ID!): User
         users: [User]
+        userExists(email: String!): Boolean!
     }
 
     type Mutation {
         createUser(email: String!, password: String!, spotifyAccountLink: String): User
+        loginUser(email: String!, password: String!): User
     }
 `);
 
