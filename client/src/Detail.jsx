@@ -1,20 +1,21 @@
 const Detail = ({album, artists, name}) => {
 
+    
     return (
-        <div className="offset-md-1 col-sm-4" >
-            <div className="row col-sm-12 px-0">
-                <img 
+        <div >
+            <div >
+                <img style={{width: '50%', height: '50%'}}
                     src={album.images[0].url}
                     alt={name}>                    
                 </img>
             </div>
-            <div className="row col-sm-12 px-0">
-                <label htmlFor={name} className="form-label col-sm-12">
+            <div >
+                <label htmlFor={name}>
                     {name}
                 </label>
             </div>
-            <div className="row col-sm-12 px-0">
-                <label htmlFor={artists[0].name} className="form-label col-sm-12">
+            <div>
+                <label htmlFor={artists[0].name}>
                     {artists[0].name}
                 </label>
             </div>
