@@ -173,7 +173,7 @@ const App = () => {
             <Listbox items={tracks.listOfTracksFromAPI} clicked={listboxClicked} />
             {trackDetail && <Detail {...trackDetail} /> }
           </div>        
-      </form> */}
+      </form> 
 
       <SignUp />
       <Playlists token={token} />

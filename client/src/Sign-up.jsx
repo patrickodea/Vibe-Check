@@ -104,7 +104,7 @@ const Signup = () => {
           <button type="submit" onClick={handleSubmit}>Sign up</button>
         </>
       ) : (
-        <button type="button" onClick={() => window.location = SPOTIFY_AUTH_URL}>Link Your Spotify account to Vibe Check</button>
+        <h3>Your account has been created and you are signed in, Welcome to Vibe Check!</h3>
       )}
     </form>
     );
