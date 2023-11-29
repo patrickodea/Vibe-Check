@@ -3,6 +3,7 @@ import { Credentials } from './Credentials';
 import Dropdown from './Dropdown';
 import Listbox from './Listbox';
 import Detail from './Detail';
+import SignUp from './Sign-up';
 import Header from './Header';
 import Playlists from './Playlists';
 import axios from 'axios';
@@ -160,26 +161,6 @@ const App = () => {
 
   return (
     <div className="container">
-      <Header token={token} />
-      {/* Getting errors from this commented out section with the map functions and props */}
-
-      {/* <Dropdown 
-        options={genres.listOfGenresFromAPI}
-        selectedGenre={genres.selectedGenre}
-        listOfGenresFromAPI={genres.listOfGenresFromAPI}
-        genreChanged={genreChanged}
-      /> 
-      <Listbox 
-        selectedPlaylist={playlist.selectedPlaylist}
-        listOfPlaylistFromAPI={playlist.listOfPlaylistFromAPI}
-        playlistChanged={playlistChanged}
-      />
-      <Detail 
-        selectedTrack={tracks.selectedTrack}
-        listOfTracksFromAPI={tracks.listOfTracksFromAPI}
-        trackDetail={trackDetail}
-        listboxClicked={listboxClicked}
-      /> */}
       <form onSubmit={buttonClicked}>        
           <Dropdown label="Genre :" options={genres.listOfGenresFromAPI} selectedValue={genres.selectedGenre} changed={genreChanged} />
           <Dropdown label="Playlist :" options={playlist.listOfPlaylistFromAPI} selectedValue={playlist.selectedPlaylist} changed={playlistChanged} />
@@ -192,7 +173,9 @@ const App = () => {
             <Listbox items={tracks.listOfTracksFromAPI} clicked={listboxClicked} />
             {trackDetail && <Detail {...trackDetail} /> }
           </div>        
-      </form>
+      </form> 
+
+      <SignUp />
       <Playlists token={token} />
     </div>
     
