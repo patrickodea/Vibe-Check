@@ -12,7 +12,7 @@ import Listbox from './Listbox';
 import Detail from './Detail';
 import SignUp from './Sign-up';
 import Header from './Header';
-import Playlists from './Playlists';
+import Playlists from '../src/pages/Playlists';
 import axios from 'axios';
 import { propTypes } from 'prop-types';
 const httpLink = createHttpLink({
