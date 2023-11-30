@@ -5,7 +5,7 @@ import Listbox from '../components/Listbox';
 import Detail from '../components/Detail';
 import axios from 'axios';
 
-const Browse = () => {
+const Playlists = () => {
   
  const spotify = Credentials();  
  const clientId = "b59cdff7fd2249bc9e1c068238e2f281";
@@ -204,4 +204,4 @@ const Browse = () => {
 
 }
 
-export default Browse;
+export default Playlists;

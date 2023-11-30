@@ -4,6 +4,11 @@ const Header = ({currentPage, handlePageChange}) => {
 
     <header>
       <div>
+       <a href="#sign-up"
+       onClick={() => handlePageChange('Signup')}
+       className={currentPage === 'Signup'? 'nav-link active' : 'nav-link'}>
+       Signup</a>
+
        <a href="#browse"
        onClick={() => handlePageChange('Browse')}
        className={currentPage === 'Browse'? 'nav-link active' : 'nav-link'}>
@@ -19,10 +24,11 @@ const Header = ({currentPage, handlePageChange}) => {
        className={currentPage === 'Saved'? 'nav-link active' : 'nav-link'}>
        Saved</a>
 
-       <a href="#sign-up"
-       onClick={() => handlePageChange('Signup')}
-       className={currentPage === 'Signup'? 'nav-link active' : 'nav-link'}>
-       Signup</a>
+       <a href="#donations"
+       onClick={() => handlePageChange('Donations')}
+       className={currentPage === 'Donations'? 'nav-link active' : 'nav-link'}>
+       Donations</a>
+
       </div>
     </header>
   );

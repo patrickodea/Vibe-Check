@@ -1,10 +1,15 @@
 import axios from "axios";
 import { Credentials } from "../Credentials";
 import { useState, useEffect } from "react";
+import BrowseListbox from "../components/BrowseListbox";
+import BrowseDetail from "../components/NewReleaseDetail";
 
-const Playlists = () => {
-  const [playlists, setPlaylists] = useState([]);
+const Browse = () => {
+
   const [newReleases, setNewReleases] = useState([]);
+  const [playlists, setPlaylists] = useState({selectedPlaylist: '', listOfPlaylistFromAPI: []});
+  const [token, setToken] = useState();
+
 
   useEffect(() => {
     // Popular playlists
@@ -19,21 +24,25 @@ const Playlists = () => {
       },
       data: 'grant_type=client_credentials',
     })
-    .then(tokenResponse => {      
+    .then(tokenResponse => {   
+      setToken(tokenResponse.data.access_token);
       let spotifyToken = tokenResponse.data.access_token;
       
       axios("https://api.spotify.com/v1/browse/featured-playlists?limit=5", {
         method: "GET",
         headers: { Authorization: "Bearer " + spotifyToken },
       })
-      .then((response) => {
-        setPlaylists(response.data.playlists.items);
+      .then((playlistResponse) => {
+
+        setPlaylists(playlistResponse.data.playlists.items)
+
         // Gets new releases
         axios("https://api.spotify.com/v1/browse/new-releases?limit=5", {
           method: "GET",
           headers: { Authorization: "Bearer " + spotifyToken },
         }).then((response) => {
           setNewReleases(response.data.albums.items);
+          console.log(response);
         });
       })
     })
@@ -44,21 +53,11 @@ const Playlists = () => {
 
   return (
     <div>
-      <h3>Featured Playlists</h3>
-      {playlists.map((playlist) => (
-        <button key={playlist.id} id={playlist.id}>
-          {playlist.name}
-        </button>
-      ))}
-
-      <h3>New Releases</h3>
-      {newReleases.map((newRelease) => (
-        <button key={newRelease.id} id={newRelease.id}>
-          {newRelease.name}
-        </button>
-      ))}
+      <div>
+        <BrowseListbox playlists={playlists} newReleases={newReleases} token={token}/>
+      </div>
     </div>
   );
 };
 
-export default Playlists;
+export default Browse;
