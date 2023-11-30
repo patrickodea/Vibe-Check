@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Credentials } from './Credentials';
-import Dropdown from './Dropdown';
-import Listbox from './Listbox';
-import Detail from './Detail';
+import Dropdown from '../src/components/Dropdown';
+import Listbox from '../src/components/Listbox';
+import Detail from '../src/components/Detail';
 import SignUp from './Sign-up';
 import Header from './Header';
-import Playlists from './Playlists';
+import Playlists from '../src/pages/Playlists';
 import axios from 'axios';
 import { propTypes } from 'prop-types';
 
