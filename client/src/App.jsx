@@ -1,13 +1,42 @@
 import { useState, useEffect } from 'react';
 import { Credentials } from './Credentials';
-import Dropdown from '../src/components/Dropdown';
-import Listbox from '../src/components/Listbox';
-import Detail from '../src/components/Detail';
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  createHttpLink,
+} from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
+import Dropdown from './Dropdown';
+import Listbox from './Listbox';
+import Detail from './Detail';
 import SignUp from './Sign-up';
 import Header from './Header';
 import Playlists from '../src/pages/Playlists';
 import axios from 'axios';
 import { propTypes } from 'prop-types';
+const httpLink = createHttpLink({
+  uri: '/graphql',
+});
+
+// Construct request middleware that will attach the JWT token to every request as an `authorization` header
+const authLink = setContext((_, { headers }) => {
+  // get the authentication token from local storage if it exists
+  const token = localStorage.getItem('id_token');
+  // return the headers to the context so httpLink can read them
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : '',
+    },
+  };
+});
+
+const client = new ApolloClient({
+  // Set up our client to execute the `authLink` middleware prior to making the request to our GraphQL API
+  link: authLink.concat(httpLink),
+  cache: new InMemoryCache(),
+});
 
 const App = () => {
   
@@ -160,6 +189,7 @@ const App = () => {
 
 
   return (
+    <ApolloProvider client={client}>
     <div className="container">
       <form onSubmit={buttonClicked}>        
           <Dropdown label="Genre :" options={genres.listOfGenresFromAPI} selectedValue={genres.selectedGenre} changed={genreChanged} />
@@ -178,7 +208,7 @@ const App = () => {
       <SignUp />
       <Playlists token={token} />
     </div>
-    
+    </ApolloProvider>
   );
 }
 
