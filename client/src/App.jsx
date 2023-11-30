@@ -1,5 +1,5 @@
-import Navigation from './components/Navigation';
+import Navigation from "./components/Navigation";
 
-const App = () => <Navigation />;
+const App = () =>  <Navigation />
 
 export default App;

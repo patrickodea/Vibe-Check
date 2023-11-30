@@ -94,7 +94,6 @@ const Signup = () => {
 
     return (
       <form>
-        <h1>Sign-up Page</h1>
       {!isUserCreated ? (
         <>
           <input type="text" value={email} onChange={handleEmailChange} placeholder="Email" />
