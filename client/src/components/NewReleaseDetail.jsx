@@ -1,5 +1,5 @@
 const BrowseDetail = (albumData) => {
-  console.log(albumData);
+  // console.log(albumData);
 
   return (
     <div>
