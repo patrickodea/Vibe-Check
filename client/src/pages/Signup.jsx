@@ -38,25 +38,30 @@ const Signup = () => {
         event.preventDefault();
         if (email !== '' && password.length >= 8) {
           axios({
-            url: 'http://localhost:4000/graphql', //! change to absolute path of production server
+            url: 'http://localhost:3001/graphql', //! change to absolute path of production server
             method: 'post',
             data: {
               query: `
-                query {
-                  userExists(email: "${email}")
+              query Query($email: String!) {
+                userExists(email: $email) {
+                  email
                 }
-              `
+              }
+            `,
+            variables: {
+              email: email
+            }
             }
           })
           .then(response => {
-            if (response.data.data.userExists) {
+            if (response && response.data && response.data.data && response.data.data.userExists) {
               setErrors(prevErrors => ({...prevErrors, email: 'email already exists'}));
             } else {
               console.log('unique email entered')
               
               // create user in mongo db
               return axios({
-                url: 'http://localhost:4000/graphql', //! change to absolute path of production server
+                url: 'http://localhost:3001/graphql', //! change to absolute path of production server
                 method: 'post',
                 data: {
                   query: `
@@ -85,8 +90,16 @@ const Signup = () => {
             }
           })
           .catch(error => {
-            console.error(error);
-            // Handle the error appropriately here
+            if (error.response) {
+              console.log(error.response.data);
+              console.log(error.response.status);
+              console.log(error.response.headers);
+            } else if (error.request) {
+              console.log(error.request);
+            } else {
+              console.log('Error', error.message);
+            }
+            console.log(error.config);
           });
         }
       };
