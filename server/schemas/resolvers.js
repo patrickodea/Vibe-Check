@@ -19,37 +19,37 @@ const resolvers = {
     },
   },
   Mutation: {
-    createUser: async ({ email, password, spotifyAccountLink }) => {
-      const user = await User.create({ spotifyAccountLink, email, password });
-      const token = signToken(user);
-      return { token, user };
-    },
-    // userExists: async ({ email }) => {
-    //     try {
-    //       const user = await User.findOne({ email: email });
-    //       return Boolean(user);
-    //     } catch (error) {
-    //       throw new Error('Error checking if user exists');
-    //     }
-    // },
-    loginUser: async ({ email, password }) => {
-      const user = await User.findOne({ email });
+    createUser: async (parent, { email, password,  }) => {
+      console.log(email, password);
+      const user = await User.create({ email, password });
 
+      if (!user.email) {
+        throw new Error('Failed to create user with non-null email');
+      }
+
+      const token = signToken(user);
+      return { token, email: user.email };
+    },
+    loginUser: async (parent, { email, password }) => {
+      const user = await User.findOne({ email });
+  
       if (!user) {
         throw AuthenticationError;
       }
-
+  
       const correctPw = await user.isCorrectPassword(password);
-
+  
       if (!correctPw) {
         throw AuthenticationError;
       }
-
+  
       const token = signToken(user);
-
+  
       return { token, user };
     }, 
   }
-};
+   
+  }
+;
 
 module.exports = resolvers;
