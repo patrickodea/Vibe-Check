@@ -28,7 +28,7 @@ const Browse = () => {
       setToken(tokenResponse.data.access_token);
       let spotifyToken = tokenResponse.data.access_token;
       
-      axios("https://api.spotify.com/v1/browse/featured-playlists?limit=5", {
+      axios("https://api.spotify.com/v1/browse/featured-playlists?limit=10", {
         method: "GET",
         headers: { Authorization: "Bearer " + spotifyToken },
       })
@@ -37,7 +37,7 @@ const Browse = () => {
         setPlaylists(playlistResponse.data.playlists.items)
 
         // Gets new releases
-        axios("https://api.spotify.com/v1/browse/new-releases?limit=5", {
+        axios("https://api.spotify.com/v1/browse/new-releases?limit=15", {
           method: "GET",
           headers: { Authorization: "Bearer " + spotifyToken },
         }).then((response) => {
