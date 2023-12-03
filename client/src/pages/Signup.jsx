@@ -2,8 +2,10 @@ import { useState } from 'react';
 import axios from 'axios';
 import { Credentials } from '../Credentials';
 
+const serverURL = process.env.NODE_ENV === 'production' ? 'https://vibe-check.up.railway.app' : 'http://localhost:3001';
 
 const Signup = () => {
+  console.log('Current Environment: ' + process.env.NODE_ENV);
 
   const spotify = Credentials();
   const SCOPES = 'user-read-private user-read-email playlist-modify-public playlist-modify-private';
@@ -38,7 +40,7 @@ const Signup = () => {
         event.preventDefault();
         if (email !== '' && password.length >= 8) {
           axios({
-            url: 'http://localhost:3001/graphql', //! change to absolute path of production server
+            url: `${serverURL}/graphql`,
             method: 'post',
             data: {
               query: `
@@ -61,7 +63,7 @@ const Signup = () => {
               
               // create user in mongo db
               return axios({
-                url: 'http://localhost:3001/graphql', //! change to absolute path of production server
+                url: `${serverURL}/graphql`,
                 method: 'post',
                 data: {
                   query: `
@@ -86,7 +88,7 @@ const Signup = () => {
                 setIsUserCreated(true);
                 // rest of the success logic...
               } else if (response.data.errors) {
-                console.error("Error creating user:", response.data.errors);
+                console.error("git config pull.rebase false:", response.data.errors);
               }
             }
           })
