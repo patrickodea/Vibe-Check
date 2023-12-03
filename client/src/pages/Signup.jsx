@@ -1,130 +1,175 @@
-import { useState } from 'react';
-import axios from 'axios';
-import { Credentials } from '../Credentials';
+import { useState } from "react";
+import axios from "axios";
+import { Credentials } from "../Credentials";
 
-const serverURL = process.env.NODE_ENV === 'production' ? 'https://vibe-check.up.railway.app' : 'http://localhost:3001';
+const serverURL =
+  process.env.NODE_ENV === "production"
+    ? "https://vibe-check.up.railway.app"
+    : "http://localhost:3001";
 
 const Signup = () => {
-  console.log('Current Environment: ' + process.env.NODE_ENV);
+  console.log("Current Environment: " + process.env.NODE_ENV);
 
   const spotify = Credentials();
-  const SCOPES = 'user-read-private user-read-email playlist-modify-public playlist-modify-private';
+  const SCOPES =
+    "user-read-private user-read-email playlist-modify-public playlist-modify-private";
   //! change redirect url in production
-  const SPOTIFY_AUTH_URL = `https://accounts.spotify.com/authorize?client_id=${spotify.ClientId}&response_type=code&redirect_uri=${encodeURIComponent('http://localhost:5173/callback')}&scope=${encodeURIComponent(SCOPES)}`;
-    
-  const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [errors, setErrors] = useState({email: '', password: ''});
-    const [isUserCreated, setIsUserCreated] = useState(false);
+  const SPOTIFY_AUTH_URL = `https://accounts.spotify.com/authorize?client_id=${
+    spotify.ClientId
+  }&response_type=code&redirect_uri=${encodeURIComponent(
+    "http://localhost:5173/callback"
+  )}&scope=${encodeURIComponent(SCOPES)}`;
 
-    const handleEmailChange = (event) => {
-        setEmail(event.target.value);
-        if (event.target.value === '') {
-            setErrors(prevErrors => ({...prevErrors, email: 'Email is required'}));
-        } else {
-            setErrors(prevErrors => ({...prevErrors, email: ''}));
-        }
-    };
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({ email: "", password: "" });
+  const [isUserCreated, setIsUserCreated] = useState(false);
 
-    const handlePasswordChange = (event) => {
-        setPassword(event.target.value);
-        if (event.target.value.length < 8) {
-            setErrors(prevErrors => ({...prevErrors, password: 'Password must be at least 8 characters'}));
-        } else {
-            setErrors(prevErrors => ({...prevErrors, password: ''}));
-        }
-    };
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value);
+    if (event.target.value === "") {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        email: "Email is required",
+      }));
+    } else {
+      setErrors((prevErrors) => ({ ...prevErrors, email: "" }));
+    }
+  };
 
-    // hand submit function
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        if (email !== '' && password.length >= 8) {
-          axios({
-            url: `${serverURL}/graphql`,
-            method: 'post',
-            data: {
-              query: `
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+    if (event.target.value.length < 8) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        password: "Password must be at least 8 characters",
+      }));
+    } else {
+      setErrors((prevErrors) => ({ ...prevErrors, password: "" }));
+    }
+  };
+
+  // hand submit function
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (email !== "" && password.length >= 8) {
+      axios({
+        url: `${serverURL}/graphql`,
+        method: "post",
+        data: {
+          query: `
               query Query($email: String!) {
                 userExists(email: $email) {
                   email
                 }
               }
             `,
-            variables: {
-              email: email
-            }
-            }
-          })
-          .then(response => {
-            if (response && response.data && response.data.data && response.data.data.userExists) {
-              setErrors(prevErrors => ({...prevErrors, email: 'email already exists'}));
-            } else {
-              console.log('unique email entered, attempting to create user...')
-              
-              // create user in mongo db
-              return axios({
-                url: `${serverURL}/graphql`,
-                method: 'post',
-                data: {
-                  query: `
+          variables: {
+            email: email,
+          },
+        },
+      })
+        .then((response) => {
+          if (
+            response &&
+            response.data &&
+            response.data.data &&
+            response.data.data.userExists
+          ) {
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              email: "email already exists",
+            }));
+          } else {
+            console.log("unique email entered, attempting to create user...");
+
+            // create user in mongo db
+            return axios({
+              url: `${serverURL}/graphql`,
+              method: "post",
+              data: {
+                query: `
                   mutation CreateUser($email: String!, $password: String!) {
                     createUser(email: $email, password: $password) {
                       email
                       }
                     }
                   `,
-                  variables: {
-                    email: email,
-                    password: password
-                  }
-                }
-              })
+                variables: {
+                  email: email,
+                  password: password,
+                },
+              },
+            });
+          }
+        })
+        .then((response) => {
+          if (response && response.data) {
+            if (response.data.data && response.data.data.createUser) {
+              console.log("User created!");
+              setIsUserCreated(true);
+              // rest of the success logic...
+            } else if (response.data.errors) {
+              console.error(
+                "git config pull.rebase false:",
+                response.data.errors
+              );
             }
-          })
-          .then(response => {
-            if (response && response.data) {
-              if (response.data.data && response.data.data.createUser) {
-                console.log("User created!");
-                setIsUserCreated(true);
-                // rest of the success logic...
-              } else if (response.data.errors) {
-                console.error("git config pull.rebase false:", response.data.errors);
-              }
-            }
-          })
-          .catch(error => {
-            console.error("Error creating user:", JSON.stringify(response.data.errors, null, 2));
-            if (error.response) {
-              console.log(error.response.data);
-              console.log(error.response.status);
-              console.log(error.response.headers);
-            } else if (error.request) {
-              console.log(error.request);
-            } else {
-              console.log('Error', error.message);
-            }
-            console.log(error.config);
-          });
-        }
-      };
-      
+          }
+        })
+        .catch((error) => {
+          console.error(
+            "Error creating user:",
+            JSON.stringify(response.data.errors, null, 2)
+          );
+          if (error.response) {
+            console.log(error.response.data);
+            console.log(error.response.status);
+            console.log(error.response.headers);
+          } else if (error.request) {
+            console.log(error.request);
+          } else {
+            console.log("Error", error.message);
+          }
+          console.log(error.config);
+        });
+    }
+  };
 
-    return (
+  return (
+    <div className="center container">
+      <h2 className="text-xl m-3">Login/Signup</h2>
       <form>
-      {!isUserCreated ? (
-        <>
-          <input type="text" value={email} onChange={handleEmailChange} placeholder="Email" />
-          <div>{errors.email}</div>
-          <input type="password" value={password} onChange={handlePasswordChange} placeholder="Password" />
-          <div>{errors.password}</div>
-          {/* submit button */}
-          <button type="submit" onClick={handleSubmit}>Sign up</button>
-        </>
-      ) : (
-        <h3>Your account has been created and you are signed in, Welcome to Vibe Check!</h3>
-      )}
-    </form>
-    );
+        {!isUserCreated ? (
+          <>
+            <input
+              type="text"
+              value={email}
+              onChange={handleEmailChange}
+              placeholder="Email"
+            />
+            <div>{errors.email}</div>
+            <input
+              type="password"
+              value={password}
+              onChange={handlePasswordChange}
+              placeholder="Password"
+            />
+            <div>{errors.password}</div>
+            {/* submit button */}
+            <button type="submit" onClick={handleSubmit}>
+              Sign up
+            </button>
+          </>
+        ) : (
+          <h3>
+            Your account has been created and you are signed in, Welcome to Vibe
+            Check!
+          </h3>
+        )}
+      </form>
+    </div>
+  );
 };
 
 export default Signup;
