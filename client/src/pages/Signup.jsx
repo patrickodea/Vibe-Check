@@ -2,8 +2,10 @@ import { useState } from 'react';
 import axios from 'axios';
 import { Credentials } from '../Credentials';
 
+const serverURL = process.env.NODE_ENV === 'production' ? 'https://vibe-check.up.railway.app' : 'http://localhost:3001';
 
 const Signup = () => {
+  console.log('Current Environment: ' + process.env.NODE_ENV);
 
   const spotify = Credentials();
   const SCOPES = 'user-read-private user-read-email playlist-modify-public playlist-modify-private';
@@ -38,55 +40,70 @@ const Signup = () => {
         event.preventDefault();
         if (email !== '' && password.length >= 8) {
           axios({
-            url: 'http://localhost:4000/graphql', //! change to absolute path of production server
+            url: `${serverURL}/graphql`,
             method: 'post',
             data: {
               query: `
-                query {
-                  userExists(email: "${email}")
+              query Query($email: String!) {
+                userExists(email: $email) {
+                  email
                 }
-              `
+              }
+            `,
+            variables: {
+              email: email
+            }
             }
           })
           .then(response => {
-            if (response.data.data.userExists) {
+            if (response && response.data && response.data.data && response.data.data.userExists) {
               setErrors(prevErrors => ({...prevErrors, email: 'email already exists'}));
             } else {
-              console.log('unique email entered')
+              console.log('unique email entered, attempting to create user...')
               
               // create user in mongo db
               return axios({
-                url: 'http://localhost:4000/graphql', //! change to absolute path of production server
+                url: `${serverURL}/graphql`,
                 method: 'post',
                 data: {
                   query: `
-                    mutation {
-                      createUser(email: "${email}", password: "${password}") {
-                        email
+                  mutation CreateUser($email: String!, $password: String!) {
+                    createUser(email: $email, password: $password) {
+                      email
                       }
                     }
-                  `
+                  `,
+                  variables: {
+                    email: email,
+                    password: password
+                  }
                 }
               })
             }
           })
           .then(response => {
-            if (response && response.data.data.createUser) {
-              console.log("User created!");
-              setIsUserCreated(true);
-
-              //todo: show success message to user
-                
-              // todo: start the Spotify authorization sequence with a button click
-            
-              //todo: Store the refresh token in your MongoDB database and associate it with the user's account in your app. This links the two accounts together.
-
-              //todo: call Login function after successful authorization
+            if (response && response.data) {
+              if (response.data.data && response.data.data.createUser) {
+                console.log("User created!");
+                setIsUserCreated(true);
+                // rest of the success logic...
+              } else if (response.data.errors) {
+                console.error("git config pull.rebase false:", response.data.errors);
+              }
             }
           })
           .catch(error => {
-            console.error(error);
-            // Handle the error appropriately here
+            console.error("Error creating user:", JSON.stringify(response.data.errors, null, 2));
+            if (error.response) {
+              console.log(error.response.data);
+              console.log(error.response.status);
+              console.log(error.response.headers);
+            } else if (error.request) {
+              console.log(error.request);
+            } else {
+              console.log('Error', error.message);
+            }
+            console.log(error.config);
           });
         }
       };
