@@ -13,7 +13,7 @@ const BrowseListbox = ({ playlists, newReleases, token }) => {
     e.preventDefault();
     console.log(e.target.id);
 
-    axios(`https:api.spotify.com/v1/playlists/${e.target.id}/tracks?limit=10`, {
+    axios(`https://api.spotify.com/v1/playlists/${e.target.id}/tracks?limit=10`, {
       method: "GET",
       headers: {
         Authorization: "Bearer " + token,
@@ -28,7 +28,7 @@ const BrowseListbox = ({ playlists, newReleases, token }) => {
     e.preventDefault();
     console.log(e.target.id);
 
-    axios(`https:api.spotify.com/v1/albums/${e.target.id}?limit=10`, {
+    axios(`https://api.spotify.com/v1/albums/${e.target.id}?limit=10`, {
       method: "GET",
       headers: {
         Authorization: "Bearer " + token,
