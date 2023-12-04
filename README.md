@@ -17,12 +17,16 @@
 
 ## Table of Contents
 
-- [Installation](#installation)
-- [Usage](#usage)
-- [License](#license)
-- [Contributions](#contributions)
-- [Tests](#tests)
-- [Questions](#questions)
+- [vibe-check](#vibe-check)
+  - [Links](#links)
+  - [Description](#description)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [License](#license)
+  - [Contributions](#contributions)
+  - [Tests](#tests)
+  - [Questions](#questions)
 
 ## Installation
 
@@ -37,7 +41,7 @@ MIT
 
 ## Contributions
 
-Patrick O'Dea, Cat Corbin, Dae'stanii Spackman, Noach Burton
+Patrick O'Dea, Cat Corbin, Dae'stanii Spackman, Noah Burton
 
 ## Tests
 
