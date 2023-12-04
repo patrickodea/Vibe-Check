@@ -7,6 +7,11 @@ const userSchema = new Schema({
     spotifyAccountLink: String
 });
 
+// add correctPassword method to userSchema
+userSchema.methods.isCorrectPassword = async function (password) {
+    return await password === this.password;
+};
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;

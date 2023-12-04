@@ -2,10 +2,12 @@ import { useState } from "react";
 import axios from "axios";
 import { Credentials } from "../Credentials";
 
+
+
 const serverURL =
-  process.env.NODE_ENV === "production"
-    ? "https://vibe-check.up.railway.app"
-    : "http://localhost:3001";
+process.env.NODE_ENV === "production"
+? "https://vibe-check.up.railway.app"
+: "http://localhost:3001";
 
 const Signup = () => {
   console.log("Current Environment: " + process.env.NODE_ENV);
@@ -23,7 +25,8 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({ email: "", password: "" });
-  const [isUserCreated, setIsUserCreated] = useState(false);
+  const [isLoggedIn, setisLoggedIn] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -105,13 +108,45 @@ const Signup = () => {
         })
         .then((response) => {
           if (response && response.data) {
-            if (response.data.data && response.data.data.createUser) {
-              console.log("User created!");
-              setIsUserCreated(true);
-              // rest of the success logic...
+            if (response.data.data && response.data.data.createUser) 
+              console.log("user created");
+
+              // login in user
+              return axios({
+                url: `${serverURL}/graphql`,
+                method: "post",
+                data: {
+                  query: `
+                    mutation LoginUser($email: String!, $password: String!) {
+                      loginUser(email: $email, password: $password) {
+                        token
+                        email
+                        }
+                      }
+                    `,
+                  variables: {
+                    email: email,
+                    password: password,
+                  },
+                },
+              });
+            
+          }
+        })
+        .then((response) => {
+          if (response && response.data) {
+            if (response.data.data && response.data.data.loginUser) {
+              console.log("User logged in!");
+              setisLoggedIn(true);
+              
+        
+              // Store the token in local storage
+              localStorage.setItem('token', response.data.data.loginUser.token);
+              
+              
             } else if (response.data.errors) {
               console.error(
-                "git config pull.rebase false:",
+                "Invalid login credentials:",
                 response.data.errors
               );
             }
@@ -138,9 +173,12 @@ const Signup = () => {
 
   return (
     <div className="center container">
-      <h2 className="text-xl m-3">Login/Signup</h2>
+      <h2 className="text-xl m-3">{isLogin ? 'Login' : 'Signup'}</h2>
+      <button onClick={() => setIsLogin(!isLogin)}>
+        Switch to {isLogin ? 'Signup' : 'Login'}
+      </button>
       <form>
-        {!isUserCreated ? (
+        {!isLoggedIn ? (
           <>
             <input
               type="text"
