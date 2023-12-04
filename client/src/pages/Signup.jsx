@@ -10,7 +10,7 @@ process.env.NODE_ENV === "production"
 : "http://localhost:3001";
 
 const Signup = () => {
-  console.log("Current Environment: " + process.env.NODE_ENV);
+  // console.log("Current Environment: " + process.env.NODE_ENV);
 
   const spotify = Credentials();
   const SCOPES =
@@ -52,124 +52,6 @@ const Signup = () => {
     }
   };
 
-  // hand submit function
-  // const handleSubmit = (event) => {
-  //   event.preventDefault();
-  //   if (email !== "" && password.length >= 8) {
-  //     axios({
-  //       url: `${serverURL}/graphql`,
-  //       method: "post",
-  //       data: {
-  //         query: `
-  //             query Query($email: String!) {
-  //               userExists(email: $email) {
-  //                 email
-  //               }
-  //             }
-  //           `,
-  //         variables: {
-  //           email: email,
-  //         },
-  //       },
-  //     })
-  //       .then((response) => {
-  //         if (
-  //           response &&
-  //           response.data &&
-  //           response.data.data &&
-  //           response.data.data.userExists
-  //         ) {
-  //           setErrors((prevErrors) => ({
-  //             ...prevErrors,
-  //             email: "email already exists",
-  //           }));
-  //         } else {
-  //           console.log("unique email entered, attempting to create user...");
-
-  //           // create user in mongo db
-  //           return axios({
-  //             url: `${serverURL}/graphql`,
-  //             method: "post",
-  //             data: {
-  //               query: `
-  //                 mutation CreateUser($email: String!, $password: String!) {
-  //                   createUser(email: $email, password: $password) {
-  //                     email
-  //                     }
-  //                   }
-  //                 `,
-  //               variables: {
-  //                 email: email,
-  //                 password: password,
-  //               },
-  //             },
-  //           });
-  //         }
-  //       })
-  //       .then((response) => {
-  //         if (response && response.data) {
-  //           if (response.data.data && response.data.data.createUser) 
-  //             console.log("user created");
-
-  //             // login in user
-  //             return axios({
-  //               url: `${serverURL}/graphql`,
-  //               method: "post",
-  //               data: {
-  //                 query: `
-  //                   mutation LoginUser($email: String!, $password: String!) {
-  //                     loginUser(email: $email, password: $password) {
-  //                       token
-  //                       email
-  //                       }
-  //                     }
-  //                   `,
-  //                 variables: {
-  //                   email: email,
-  //                   password: password,
-  //                 },
-  //               },
-  //             });
-            
-  //         }
-  //       })
-  //       .then((response) => {
-  //         if (response && response.data) {
-  //           if (response.data.data && response.data.data.loginUser) {
-  //             console.log("User logged in!");
-  //             setisLoggedIn(true);
-              
-        
-  //             // Store the token in local storage
-  //             localStorage.setItem('token', response.data.data.loginUser.token);
-              
-              
-  //           } else if (response.data.errors) {
-  //             console.error(
-  //               "Invalid login credentials:",
-  //               response.data.errors
-  //             );
-  //           }
-  //         }
-  //       })
-  //       .catch((error) => {
-  //         console.error(
-  //           "Error creating user:",
-  //           JSON.stringify(response.data.errors, null, 2)
-  //         );
-  //         if (error.response) {
-  //           console.log(error.response.data);
-  //           console.log(error.response.status);
-  //           console.log(error.response.headers);
-  //         } else if (error.request) {
-  //           console.log(error.request);
-  //         } else {
-  //           console.log("Error", error.message);
-  //         }
-  //         console.log(error.config);
-  //       });
-  //   }
-  // };
 
   const handleSubmit = (event) => {
     event.preventDefault();
