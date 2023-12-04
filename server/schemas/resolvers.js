@@ -44,8 +44,9 @@ const resolvers = {
       }
   
       const token = signToken(user);
-  
-      return { token, user };
+      
+      // create a new object that contains all the properties from the user document and the token.
+      return { ...user._doc, token };
     }, 
   }
    

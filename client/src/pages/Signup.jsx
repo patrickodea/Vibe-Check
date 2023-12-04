@@ -1,14 +1,16 @@
-import { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import { Credentials } from "../Credentials";
 
+
+
 const serverURL =
-  process.env.NODE_ENV === "production"
-    ? "https://vibe-check.up.railway.app"
-    : "http://localhost:3001";
+process.env.NODE_ENV === "production"
+? "https://vibe-check.up.railway.app"
+: "http://localhost:3001";
 
 const Signup = () => {
-  console.log("Current Environment: " + process.env.NODE_ENV);
+  // console.log("Current Environment: " + process.env.NODE_ENV);
 
   const spotify = Credentials();
   const SCOPES =
@@ -23,7 +25,8 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({ email: "", password: "" });
-  const [isUserCreated, setIsUserCreated] = useState(false);
+  const [isLoggedIn, setisLoggedIn] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
@@ -49,41 +52,85 @@ const Signup = () => {
     }
   };
 
-  // hand submit function
+
   const handleSubmit = (event) => {
     event.preventDefault();
     if (email !== "" && password.length >= 8) {
-      axios({
-        url: `${serverURL}/graphql`,
-        method: "post",
-        data: {
-          query: `
+      if (isLogin) {
+        console.log('You are in Login mode for this submission')
+        // Perform login
+        return axios({
+          url: `${serverURL}/graphql`,
+          method: "post",
+          data: {
+            query: `
+              mutation LoginUser($email: String!, $password: String!) {
+                loginUser(email: $email, password: $password) {
+                  token
+                  email
+                  }
+                }
+              `,
+            variables: {
+              email: email,
+              password: password,
+            },
+          },
+        })
+        .then((response) => {
+          if (response && response.data) {
+            if (response.data.data && response.data.data.loginUser) {
+              console.log("User logged in!");
+              localStorage.setItem('isLoggedIn', 'true');
+              setisLoggedIn(true);
+              
+        
+              // Store the token in local storage
+              localStorage.setItem('token', response.data.data.loginUser.token);
+              
+              
+            } else if (response.data.errors) {
+              console.error(
+                "Invalid login credentials:",
+                response.data.errors
+              );
+            }
+          }
+        })
+      } else {
+        console.log('You are in Signup mode for this submission')
+        // Check if user exists
+        axios({
+          url: `${serverURL}/graphql`,
+          method: "post",
+          data: {
+            query: `
               query Query($email: String!) {
                 userExists(email: $email) {
                   email
                 }
               }
             `,
-          variables: {
-            email: email,
+            variables: {
+              email: email,
+            },
           },
-        },
-      })
-        .then((response) => {
-          if (
-            response &&
-            response.data &&
-            response.data.data &&
-            response.data.data.userExists
-          ) {
-            setErrors((prevErrors) => ({
-              ...prevErrors,
-              email: "email already exists",
-            }));
-          } else {
-            console.log("unique email entered, attempting to create user...");
+        })
+          .then((response) => {
+            if (
+              response &&
+              response.data &&
+              response.data.data &&
+              response.data.data.userExists
+            ) {
+              setErrors((prevErrors) => ({
+                ...prevErrors,
+                email: "email already exists",
+              }));
+            } else {
+              console.log("unique email entered, attempting to create user...");
 
-            // create user in mongo db
+              // create user in mongo db
             return axios({
               url: `${serverURL}/graphql`,
               method: "post",
@@ -101,46 +148,54 @@ const Signup = () => {
                 },
               },
             });
-          }
-        })
-        .then((response) => {
-          if (response && response.data) {
-            if (response.data.data && response.data.data.createUser) {
-              console.log("User created!");
-              setIsUserCreated(true);
-              // rest of the success logic...
-            } else if (response.data.errors) {
-              console.error(
-                "git config pull.rebase false:",
-                response.data.errors
-              );
             }
-          }
-        })
-        .catch((error) => {
-          console.error(
-            "Error creating user:",
-            JSON.stringify(response.data.errors, null, 2)
-          );
-          if (error.response) {
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
-          } else if (error.request) {
-            console.log(error.request);
-          } else {
-            console.log("Error", error.message);
-          }
-          console.log(error.config);
-        });
+          })
+          .then((response) => {
+            if (response && response.data) {
+              if (response.data.data && response.data.data.createUser) 
+                console.log("user created, logging in...");
+  
+                // login in user
+                return axios({
+                  url: `${serverURL}/graphql`,
+                  method: "post",
+                  data: {
+                    query: `
+                      mutation LoginUser($email: String!, $password: String!) {
+                        loginUser(email: $email, password: $password) {
+                          token
+                          email
+                          }
+                        }
+                      `,
+                    variables: {
+                      email: email,
+                      password: password,
+                    },
+                  },
+                });
+              
+            }
+          })
+          .then((response) => {
+            console.log('User logged in!')
+            setisLoggedIn(true);
+          })
+          .catch((error) => {
+            console.error("Error checking if user exists:", error);
+          });
+      }
     }
   };
 
   return (
     <div className="center container">
-      <h2 className="text-xl m-3">Login/Signup</h2>
+      <h2 className="text-xl m-3">{isLogin ? 'Login' : 'Signup'}</h2>
+      <button onClick={() => setIsLogin(!isLogin)}>
+        Switch to {isLogin ? 'Signup' : 'Login'}
+      </button>
       <form>
-        {!isUserCreated ? (
+        {!isLoggedIn ? (
           <>
             <input
               type="text"
@@ -158,12 +213,12 @@ const Signup = () => {
             <div>{errors.password}</div>
             {/* submit button */}
             <button type="submit" onClick={handleSubmit}>
-              Sign up
+              Submit
             </button>
           </>
         ) : (
           <h3>
-            Your account has been created and you are signed in, Welcome to Vibe
+            You are signed in, Welcome to Vibe
             Check!
           </h3>
         )}

@@ -4,6 +4,7 @@ const typeDefs = `
         email: String!
         password: String!
         spotifyAccountLink: String
+        token: String
     }
 
     type Query {
