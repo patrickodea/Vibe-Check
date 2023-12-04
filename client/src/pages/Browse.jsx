@@ -15,7 +15,7 @@ const Browse = () => {
     // Popular playlists
     const spotify = Credentials();  
 
-    axios('https:accounts.spotify.com/api/token', {
+    axios('https://accounts.spotify.com/api/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',

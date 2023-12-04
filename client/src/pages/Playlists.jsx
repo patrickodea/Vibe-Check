@@ -127,7 +127,7 @@ const Playlists = () => {
    const buttonClicked = e => {
      e.preventDefault();
 
-     axios(`https:api.spotify.com/v1/playlists/${playlist.selectedPlaylist}/tracks?limit=10`, {
+     axios(`https://api.spotify.com/v1/playlists/${playlist.selectedPlaylist}/tracks?limit=10`, {
        method: 'GET',
        headers: {
          'Authorization' : 'Bearer ' + token
