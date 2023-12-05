@@ -1,9 +1,12 @@
+import logo from '../assets/logo.png'
+
 const Header = ({currentPage, handlePageChange}) => {
 
   return (
 
     <header className="header text-xl w-full bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90%">
       <div>
+      <img src={logo} style={{width: '100px', height: '85px'}}></img>
        <a href="#sign-up"
        onClick={() => handlePageChange('Signup')}
        className={currentPage === 'Signup'? 'nav-link active' : 'nav-link'}>
