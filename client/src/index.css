@@ -25,6 +25,13 @@
   top: 50px;
 }
 
+.header img {
+  padding-bottom: 10px;
+  position: absolute;
+  top: -60px;
+  left: 750px;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
